@@ -1,0 +1,47 @@
+version: "2"
+services:
+  web:
+    image: nginx:latest
+    command: nginx
+    restart: always
+    ports:
+      - "80:80/tcp"
+    links:
+      - app
+    volumes_from:
+      - app
+    depends_on:
+      - app
+  app:
+    image: otbe/nc-docker-fpm:latest
+    restart: always
+    expose:
+      - "9000"
+    links:
+      - redis
+      - mysql
+    volumes_from:
+      - storage
+    depends_on:
+      - redis
+      - mysql
+  redis:
+    image: redis:3
+    restart: always
+  mysql:
+    image: mysql:5
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: nextcloud
+    volumes_from:
+      - storage
+  storage:
+    image: alpine:latest
+    command: /bin/sh
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./config.php:/var/www/html/config/config.php
+      - /var/www/html/data
+      - /var/www/html/apps
+      - /var/lib/mysql
