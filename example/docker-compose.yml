@@ -13,7 +13,7 @@ services:
     depends_on:
       - app
   app:
-    image: otbe/nc-docker-fpm:latest
+    image: otbe/nextcloud-fpm:latest
     restart: always
     expose:
       - "9000"
