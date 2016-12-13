@@ -1,4 +1,4 @@
-FROM php:5.6-fpm
+FROM php:7.0-fpm
 
 RUN apt-get update && apt-get install -y \
 	bzip2 \
@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
 
 # https://doc.owncloud.org/server/8.1/admin_manual/installation/source_installation.html#prerequisites
 RUN docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
-	&& docker-php-ext-install gd exif intl mbstring mcrypt mysql opcache pdo_mysql pdo_pgsql pgsql zip
+	&& docker-php-ext-install gd exif intl mbstring mcrypt mysqli opcache pdo_mysql pdo_pgsql pgsql zip
 
 # set recommended PHP.ini settings
 # see https://secure.php.net/manual/en/opcache.installation.php
@@ -30,12 +30,11 @@ RUN { \
 
 # PECL extensions
 RUN set -ex \
-	&& pecl install APCu-4.0.10 \
-	&& pecl install memcached-2.2.0 \
-	&& pecl install redis-2.2.8 \
-	&& docker-php-ext-enable apcu redis memcached
+	&& pecl install APCu-5.1.7 \
+	&& pecl install redis-3.0.0 \
+	&& docker-php-ext-enable apcu redis
 
-ENV NEXTCLOUD_VERSION 10.0.2
+ENV NEXTCLOUD_VERSION 11.0.0
 VOLUME /var/www/html
 
 RUN curl -fsSL -o nextcloud.tar.bz2 \
